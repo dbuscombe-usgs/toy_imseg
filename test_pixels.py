@@ -43,7 +43,7 @@ def plot_confusion_matrix2(cm, classes, normalize=False, cmap=plt.cm.Blues, dola
 
     return cm
 
-tile = 96 #128 #160 #192 #224
+tile = 192 #96 #128 #160 #192 #224
 direc='test'
 
 
@@ -97,7 +97,7 @@ for k in range(len(ares)):
 fig = plt.figure()
 ax1 = fig.add_subplot(221)
 plot_confusion_matrix2(Cmaster, classes=alabs, normalize=True, cmap=plt.cm.Reds)
-plt.savefig('cm_'+str(tile)+'.png', dpi=300, bbox_inches='tight')
+plt.savefig('cm_'+str(tile)+'c.png', dpi=300, bbox_inches='tight')
 del fig; plt.close()
 
 

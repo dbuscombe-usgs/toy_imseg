@@ -90,7 +90,6 @@ def norm_im(image_path):
    normalized = tf.divide(tf.subtract(dims_expander, [input_mean]), [input_std])
    sess = tf.Session()
    return np.squeeze(sess.run(normalized))
-
       
 
 # =========================================================
@@ -156,7 +155,7 @@ def getCRF(image, Lc, theta, n_iter, label_lines, compat_spat=12, compat_col=40,
 
 
 #==============================================================
-def run_inference_on_images(image_path, classifier_file, decim, tile, fct, n_iter, labels, compat_spat, compat_col, scale, winprop):
+def run_inference_on_images(image_path, classifier_file, decim, tile, fct, n_iter, labels, compat_spat, compat_col, scale, winprop, prob, theta):
 
    #=============================================
    # Image pre-processing
@@ -248,9 +247,7 @@ def run_inference_on_images(image_path, classifier_file, decim, tile, fct, n_ite
    # Conditional Random Field post-processing
    #=============================================
    print('CRF ... ')
-   res = getCRF(imgr, Lcr, tile, n_iter, labels, compat_spat, compat_col, scale)
-
-
+   res = getCRF(imgr, Lcr, theta, n_iter, labels, compat_spat, compat_col, scale, prob)
 
    del imgr
    resr = np.round(imresize(res, 1/fct, interp='nearest')/255 * np.max(res))
@@ -309,17 +306,19 @@ def run_inference_on_images(image_path, classifier_file, decim, tile, fct, n_ite
 #==============================================================
 if __name__ == '__main__':
 
-   tile = 224 #192 #160# 128 #96
+   tile = 192 #224 #192 #160# 128 #96
    winprop = 0.5
    direc = 'test'
-   prob_thres = .7
+   prob_thres = .75
    n_iter = 10
    compat_col = 100
+   theta = 100
    scale = 1
    decim = 4
    fct =  0.25 
-   compat_spat = 11
+   compat_spat = 13
    class_file = 'labels.txt'
+   prob = 0.9
    #=============================================
 
    ## Loads label file, strips off carriage return
@@ -364,7 +363,7 @@ if __name__ == '__main__':
 
    #image_path = images[0]
 
-   w = Parallel(n_jobs=np.min((max_proc,len(images))), verbose=10)(delayed(run_inference_on_images)(image_path, classifier_file, decim, tile, fct, n_iter, labels, compat_spat, compat_col, scale, winprop) for image_path in images)
+   w = Parallel(n_jobs=np.min((max_proc,len(images))), verbose=10)(delayed(run_inference_on_images)(image_path, classifier_file, decim, tile, fct, n_iter, labels, compat_spat, compat_col, scale, winprop, prob, theta) for image_path in images)
 
 #   C = zip(*w)
 
