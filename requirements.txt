@@ -1,5 +1,5 @@
 numpy
 joblib
-Image
+imageio
 tensorflow
 scipy
