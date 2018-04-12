@@ -1,5 +1,5 @@
-scipy
 numpy
 joblib
 Image
 tensorflow
+scipy==0.17.0
