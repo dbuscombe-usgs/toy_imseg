@@ -1,17 +1,25 @@
 
 declare -a arr=("96" "128" "160" "192" "224")
 
+prA=0.95
+prB=0.85
+inc=0.1
+
 ## now loop through the above array
 for IMAGE_SIZE in "${arr[@]}"
 do
+   echo $prA
+   echo $prB
+
    echo "Tile size: $IMAGE_SIZE"
    echo "Creating training tiles ... "
-   python2 retile.py -i train -t $IMAGE_SIZE -a .9
+   python2 retile.py -i train -t $IMAGE_SIZE -a $prA
 
    echo "Creating testing tiles ..."
-   python2 retile.py -i test -t $IMAGE_SIZE -a .85
+   python2 retile.py -i test -t $IMAGE_SIZE -a $prB
 
-   cls
+   prA=$(bc <<< "$prA-$inc")
+   prB=$(bc <<< "$prB-$inc")
 
    echo "Retraining DCNN ..."
    python2 retrain.py --image_dir train/tile_$IMAGE_SIZE \
@@ -22,7 +30,6 @@ do
    rm -rf /tmp/bottleneck
    rm -rf /tmp/checkpoint
 
-   cls
    echo "Retraining DCNN complete."
 
    rm -rf train/tile_$IMAGE_SIZE
@@ -31,8 +38,6 @@ do
    python2 test_class_tiles.py -i test -t $IMAGE_SIZE -n 100
 
    rm -rf test/tile_$IMAGE_SIZE
-
-   cls
 
 done
 
